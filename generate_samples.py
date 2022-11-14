@@ -134,6 +134,7 @@ def sample_sequence(model, tokenizer, context_tokens, context_length, args, devi
         beam_scores = torch.zeros(1, dtype=torch.float, device=context_tokens.device)
     last_beam_num = 1
     while counter < args.out_seq_length:
+        # obtain next_token_logits
         if counter == 0 and not args.block_lm:
             next_token_logits, *mems = model(context_tokens, position_ids, attention_mask, *mems)
         else:
@@ -152,6 +153,8 @@ def sample_sequence(model, tokenizer, context_tokens, context_length, args, devi
             last_token = tokens[:, -1:]
             next_token_logits, *mems = model(last_token, position_ids, attention_mask, *mems)
         next_token_logits = next_token_logits[:, -1]
+        
+        # refine next token logits (top p, top k sampling)
         if args.num_beams > 1:
             next_token_scores = F.log_softmax(next_token_logits, dim=-1)
             next_token_scores = next_token_scores + beam_scores[:, None].expand_as(next_token_scores)

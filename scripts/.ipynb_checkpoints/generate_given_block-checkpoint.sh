@@ -13,6 +13,8 @@ TEMP=0.9
 TOPK=40
 TOPP=0
 
+# do_sample=True, num_return_sequences=3, top_k=5, top_p=0.3)
+
 script_path=$(realpath $0)
 script_dir=$(dirname $script_path)
 

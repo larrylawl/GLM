@@ -86,7 +86,6 @@ def main():
 
     # Arguments.
     args = get_args()
-    
     args.mem_length = args.seq_length + args.mem_length - 1
 
     # Pytorch distributed.
