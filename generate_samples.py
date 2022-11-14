@@ -209,11 +209,12 @@ def sample_sequence(model, tokenizer, context_tokens, context_length, args, devi
     return torch.cat((context_tokens, tokens), dim=1), mems
 
 
-def read_context(tokenizer, args, output):
+def read_context(tokenizer, args, output = None, raw_text = None):
     terminate_runs, skip_run = 0, 0
     if mpu.get_model_parallel_rank() == 0:
         while True:
-            raw_text = input("\nContext prompt (stop to exit) >>> ")
+            if not raw_text:  # interactive input
+                raw_text = input("\nContext prompt (stop to exit) >>> ")
             if not raw_text:
                 print('Prompt should not be empty!')
                 continue
@@ -223,7 +224,8 @@ def read_context(tokenizer, args, output):
             generation_mask = '[gMASK]' if args.task_mask else '[MASK]'
             if args.block_lm and 'MASK]' not in raw_text:
                 raw_text += ' ' + generation_mask
-            output.write(raw_text)
+            if output:
+                output.write(raw_text)
             context_tokens = tokenizer.EncodeAsIds(raw_text).tokenization
             if args.block_lm:
                 context_tokens = [tokenizer.get_command('ENC').Id] + context_tokens

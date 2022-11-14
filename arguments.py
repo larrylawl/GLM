@@ -396,7 +396,6 @@ def add_finetune_config_args(parser):
 
 def get_args():
     """Parse all the args."""
-
     parser = argparse.ArgumentParser(description='PyTorch BERT Model')
     parser = add_model_config_args(parser)
     parser = add_fp16_config_args(parser)
